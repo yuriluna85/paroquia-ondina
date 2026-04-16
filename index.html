@@ -8,13 +8,13 @@
     <style>
         /* DEFINIÇÃO DAS CORES DA MARCA PARÓQUIA DE ONDINA - RESSURREIÇÃO DO SENHOR */
         :root {
-            --brand-dark-blue: #295F8E; /* Azul escuro principal */
-            --brand-light-blue: #4F93D0; /* Azul claro secundário */
-            --primary-gold: #FFD700; /* Dourado (apenas para toques especiais) */
+            --brand-dark-blue: #295F8E; 
+            --brand-light-blue: #4F93D0; 
+            --primary-gold: #FFD700; 
             --white: #FFFFFF;
-            --light-gray: #f8f9fa; /* Fundo mais quente */
+            --light-gray: #f8f9fa; 
             --dark-text: #333;
-            --card-gray: #e9ecef; /* Separadores */
+            --card-gray: #e9ecef; 
         }
 
         body {
@@ -25,7 +25,6 @@
             padding: 0;
         }
 
-        /* HEADER REDESENHADO COM AS CORES E TÍTULOS DA MARCA */
         header {
             background-color: var(--brand-dark-blue);
             color: var(--white);
@@ -47,14 +46,14 @@
             text-transform: uppercase;
             font-weight: bold;
             letter-spacing: 1px;
-            color: var(--brand-light-blue); /* Texto menor em azul claro */
+            color: var(--brand-light-blue); 
         }
 
         .brand-r-do-senhor {
             font-size: 1.9rem;
             font-weight: bold;
-            color: var(--white); /* Texto maior em branco */
-            font-family: 'Cinzel', serif; /* Mantemos o Cinzel para um toque solene */
+            color: var(--white); 
+            font-family: 'Cinzel', serif; 
         }
 
         header p.subtitle {
@@ -70,14 +69,12 @@
             padding: 0 15px;
         }
 
-        /* Grid de Notícias */
         #news-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); /* Aumentado um pouco o tamanho */
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
             gap: 20px;
         }
 
-        /* Animação de Entrada para os Cards */
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -89,7 +86,6 @@
             }
         }
 
-        /* DESIGN MODERNO E LIMPO DOS CARDS */
         .news-card {
             background: var(--white);
             border-radius: 12px;
@@ -111,7 +107,6 @@
             height: 220px;
             object-fit: cover;
             border-bottom: 1px solid var(--card-gray);
-            /* Imagem começa escondida para animação */
             opacity: 0;
             transition: opacity 0.5s ease-out;
         }
@@ -128,7 +123,7 @@
         .news-source {
             font-size: 0.85rem;
             font-weight: bold;
-            color: var(--brand-light-blue); /* Fonte em azul claro */
+            color: var(--brand-light-blue); 
             text-transform: uppercase;
             margin-bottom: 10px;
             display: block;
@@ -150,27 +145,26 @@
             display: inline-block;
             margin-top: auto;
             padding: 12px;
-            background-color: var(--brand-dark-blue); /* Botão em azul escuro */
+            background-color: var(--brand-dark-blue); 
             color: var(--white);
             text-decoration: none;
-            border-radius: 0 0 12px 12px; /* Arredondado só embaixo */
+            border-radius: 0 0 12px 12px; 
             font-weight: bold;
             text-align: center;
             width: 100%;
-            box-sizing: border-box; /* Garante que o padding não quebre a largura */
+            box-sizing: border-box; 
             border: none;
             transition: background-color 0.2s ease;
         }
 
         .btn-link:hover {
-            background-color: #1e537e; /* Azul ainda mais escuro no hover */
+            background-color: #1e537e; 
         }
 
-        /* FOOTER ATUALIZADO COM OS DADOS DA PARÓQUIA */
         footer {
             margin-top: 50px;
             padding: 30px;
-            background-color: #f1f3f5; /* Fundo do rodapé mais sutil */
+            background-color: #f1f3f5; 
             border-top: 1px solid #ddd;
             text-align: center;
         }
@@ -181,14 +175,13 @@
         }
 
         .version-tag {
-            background: var(--primary-gold); /* Mantemos o dourado só para a tag de versão */
+            background: var(--primary-gold); 
             color: var(--brand-dark-blue);
             padding: 2px 8px;
             border-radius: 10px;
             font-weight: bold;
         }
 
-        /* Loading Spinner em azul */
         .loader {
             text-align: center;
             font-size: 1.5rem;
@@ -215,35 +208,38 @@
 <footer>
     <p>
         © 2026 Paróquia de Ondina - Ressurreição do Senhor | 
-        Versão: <span class="version-tag">2.1.3</span>
+        Versão: <span class="version-tag">2.1.5</span>
     </p>
 </footer>
 
 <script>
-    // FONTES DE NOTÍCIAS (MANTIDAS)
+    // FONTES DE NOTÍCIAS (Agora com suporte a RSS)
     const sites = [
         {
+            name: "O Ressuscitado (Paróquia)",
+            // Usa a API rss2json para converter o feed de postagens do site da paróquia
+            url: "https://api.rss2json.com/v1/api.json?rss_url=https://www.paroquiadeondina.com.br/blog-feed.xml",
+            type: "rss"
+        },
+        {
             name: "CNBB",
-            url: "https://www.cnbb.org.br/wp-json/wp/v2/posts?_embed&per_page=6"
+            url: "https://www.cnbb.org.br/wp-json/wp/v2/posts?_embed&per_page=6",
+            type: "wp"
         },
         {
             name: "Canção Nova",
-            url: "https://noticias.cancaonova.com/wp-json/wp/v2/posts?_embed&per_page=6"
+            url: "https://noticias.cancaonova.com/wp-json/wp/v2/posts?_embed&per_page=6",
+            type: "wp"
         },
         {
             name: "Arquidiocese de Salvador",
-            url: "https://arquidiocesesalvador.org.br/wp-json/wp/v2/posts?_embed&per_page=4" 
+            url: "https://arquidiocesesalvador.org.br/wp-json/wp/v2/posts?_embed&per_page=4",
+            type: "wp"
         }
     ];
 
-    // LÓGICA DA IMAGEM CORINGA
-    // Utilize o arquivo da sua marca como fallback. 
-    // Supondo que você o tenha como image_0.png no mesmo diretório.
-    const jokerImagePath = "./image_0.png";
-
-    // PROXY PARA CONTORNAR CORS (MANTIDO)
-    const proxyGetPrefix = "https://api.allorigins.win/get?url=";
-    const proxyRawPrefix = "https://api.allorigins.win/raw?url=";
+    const jokerImagePath = "./logo-paroquia.png";
+    const proxyPrefix = "https://corsproxy.io/?";
 
     async function fetchNews() {
         const container = document.getElementById('news-container');
@@ -252,32 +248,60 @@
 
         try {
             const requests = sites.map(site => {
-                const proxyUrl = proxyGetPrefix + encodeURIComponent(site.url);
-                
-                return fetch(proxyUrl)
-                    .then(res => {
-                        if (!res.ok) throw new Error("Falha de rede no Proxy");
-                        return res.json();
-                    })
-                    .then(data => {
-                        if (!data.contents) return [];
-                        const posts = JSON.parse(data.contents);
-                        return posts.map(post => ({ ...post, sourceName: site.name }));
-                    })
-                    .catch(err => {
-                        console.error(`Erro ao carregar ${site.name}:`, err);
-                        return []; 
-                    });
+                // LÓGICA PARA SITES RSS (Como o site da Paróquia)
+                if (site.type === 'rss') {
+                    return fetch(site.url)
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.status !== 'ok' || !data.items) return [];
+                            
+                            // Mapeia os dados do RSS para "fingir" que é um post do WordPress
+                            // Isso impede que precisemos refazer a função de layout dos cards
+                            return data.items.map(item => ({
+                                title: { rendered: item.title },
+                                date: item.pubDate,
+                                link: item.link,
+                                sourceName: site.name,
+                                isRss: true, 
+                                _embedded: {
+                                    'wp:featuredmedia': [
+                                        { source_url: item.thumbnail || (item.enclosure ? item.enclosure.link : null) }
+                                    ]
+                                }
+                            }));
+                        })
+                        .catch(err => {
+                            console.error(`Erro ao carregar RSS de ${site.name}:`, err);
+                            return []; 
+                        });
+                } 
+                // LÓGICA PARA SITES WORDPRESS (CNBB, Arquidiocese, etc)
+                else {
+                    const proxyUrl = proxyPrefix + encodeURIComponent(site.url);
+                    return fetch(proxyUrl)
+                        .then(res => {
+                            if (!res.ok) throw new Error("Falha de rede no Proxy/Servidor");
+                            return res.json();
+                        })
+                        .then(posts => {
+                            return posts.map(post => ({ ...post, sourceName: site.name }));
+                        })
+                        .catch(err => {
+                            console.error(`Erro ao carregar WP ${site.name}:`, err);
+                            return []; 
+                        });
+                }
             });
 
             const results = await Promise.all(requests);
             
+            // Junta as notícias de todos os sites e ordena cronologicamente
             allPosts = results.flat().sort((a, b) => new Date(b.date) - new Date(a.date));
 
             loader.style.display = 'none';
 
             if(allPosts.length === 0) {
-                container.innerHTML = "<h3 style='text-align:center; width:100%; color:var(--brand-dark-blue);'>Não foi possível carregar as notícias no momento.</h3>";
+                container.innerHTML = "<h3 style='text-align:center; width:100%; color:var(--brand-dark-blue);'>Não foi possível carregar as notícias no momento. Tente recarregar a página.</h3>";
             } else {
                 renderPosts(allPosts);
             }
@@ -296,7 +320,6 @@
             card.className = 'news-card';
             card.style.animationDelay = `${index * 0.05}s`;
 
-            // LÓGICA DE SELEÇÃO E PROXY DA IMAGEM
             let rawFeaturedImage = null;
             if (post._embedded && post._embedded['wp:featuredmedia'] && post._embedded['wp:featuredmedia'][0]) {
                 rawFeaturedImage = post._embedded['wp:featuredmedia'][0].source_url;
@@ -304,18 +327,22 @@
 
             let finalImageSrc;
             if (rawFeaturedImage) {
-                // Se houver imagem destacada, passe-a pelo proxy 'raw' para CORS
-                finalImageSrc = proxyRawPrefix + encodeURIComponent(rawFeaturedImage);
+                // Se a notícia for RSS, a imagem não passa pelo proxy CORS para não quebrar
+                if (post.isRss) {
+                    finalImageSrc = rawFeaturedImage;
+                } else {
+                    finalImageSrc = proxyPrefix + encodeURIComponent(rawFeaturedImage);
+                }
             } else {
-                // Senão, use a imagem coringa local. Não precisa de proxy CORS.
                 finalImageSrc = jokerImagePath;
             }
 
             const dateFormatted = new Date(post.date).toLocaleDateString('pt-BR');
             const title = post.title && post.title.rendered ? post.title.rendered : 'Título indisponível';
+            const errorImageFallback = "https://placehold.co/400x250/295F8E/FFFFFF?text=Imagem+Indisponivel";
 
             card.innerHTML = `
-                <img src="${finalImageSrc}" class="news-image" alt="Imagem da notícia" onerror="this.src='https://via.placeholder.com/400x250?text=Erro+na+Imagem'">
+                <img src="${finalImageSrc}" class="news-image" alt="Imagem da notícia" onerror="this.src='${errorImageFallback}'">
                 <div class="news-content">
                     <span class="news-source">${post.sourceName}</span>
                     <h2 class="news-title">${title}</h2>
@@ -325,13 +352,11 @@
             `;
             container.appendChild(card);
             
-            // Ativa a animação de entrada da imagem assim que ela é carregada
             const img = card.querySelector('.news-image');
             img.addEventListener('load', () => img.classList.add('loaded'));
         });
     }
 
-    // Iniciar busca
     fetchNews();
 </script>
 
