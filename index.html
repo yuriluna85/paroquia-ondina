@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Radar Religioso - Paróquia de Ondina (Mural v3.1)</title>
+    <title>Radar Religioso - Paróquia de Ondina (Painel v3.2)</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        /* DEFINIÇÃO DAS CORES DA MARCA PARÓQUIA DE ONDINA */
         :root {
             --brand-dark-blue: #295F8E; 
             --brand-light-blue: #4F93D0; 
@@ -18,124 +17,122 @@
             --card-gray: #e9ecef; 
         }
 
+        /* Reset para ocupar toda a tela sem rolagem */
+        * { box-sizing: border-box; }
+        
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Evita barras de rolagem em painéis */
+        }
+
         body {
             font-family: 'Roboto', sans-serif;
             background-color: var(--light-gray);
             color: var(--dark-text);
-            margin: 0;
-            padding: 0;
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
         }
 
-        /* HEADER OTIMIZADO PARA TELAS DE MÍDIA INDOOR */
+        /* HEADER */
         header {
+            flex: 0 0 auto;
             background-color: var(--brand-dark-blue);
             color: var(--white);
-            padding: 1rem 2rem;
-            text-align: left;
-            border-bottom: 3px solid var(--brand-light-blue);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            padding: 1rem 3rem;
+            border-bottom: 4px solid var(--brand-light-blue);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            z-index: 10;
         }
 
         .header-left-container {
             display: flex;
             flex-direction: column;
-            line-height: 1.2;
+            line-height: 1.1;
         }
 
         .brand-p-de-ondina {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             text-transform: uppercase;
             font-weight: bold;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
             color: var(--brand-light-blue); 
         }
 
         .brand-r-do-senhor {
-            font-size: 2.2rem;
+            font-size: 2.5rem;
             font-weight: bold;
             color: var(--white); 
             font-family: 'Cinzel', serif; 
         }
 
-        header p.subtitle {
-            margin-top: 5px;
-            font-size: 1rem;
-            opacity: 0.8;
-            color: var(--white);
-        }
-
-        /* RELÓGIO DIGITAL INTEGRADO */
         .header-clock-container {
             text-align: right;
-            border-left: 2px solid var(--brand-light-blue);
-            padding-left: 20px;
+            border-left: 3px solid var(--brand-light-blue);
+            padding-left: 30px;
         }
 
         .clock-time {
-            font-size: 2.8rem;
+            font-size: 3.5rem;
             font-weight: bold;
+            line-height: 1;
             font-variant-numeric: tabular-nums; 
         }
 
         .clock-date {
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             font-weight: 300;
+            text-transform: capitalize;
         }
 
-        .container {
-            flex-grow: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            max-width: 1600px;
-            margin: 0 auto;
-            padding: 40px 15px;
-        }
-
-        /* CONTAINER DO CARROSSEL DE NOTÍCIAS */
-        #news-container {
+        /* ÁREA CENTRAL (O MIOLO) */
+        main {
+            flex: 1 1 auto;
             position: relative;
             width: 100%;
-            height: 700px; 
+            background-color: #e2e8f0;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: stretch;
+        }
+
+        #news-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
         }
 
         @keyframes crossFade {
-            0% { opacity: 0; }
-            100% { opacity: 1; }
+            0% { opacity: 0; transform: scale(1.02); }
+            100% { opacity: 1; transform: scale(1); }
         }
 
-        /* DESIGN DO CARD */
         .news-card {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: var(--white);
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
             display: none; 
             flex-direction: column;
-            width: 100%;
-            max-width: 1200px;
-            height: 100%;
-            animation: crossFade 1s ease-in-out;
+            animation: crossFade 1.2s ease-in-out;
         }
 
         .news-card.active {
             display: flex;
         }
 
+        /* Imagem ocupando 60% da altura central */
         .img-wrapper {
             width: 100%;
-            height: 400px; 
+            flex: 0 0 60%;
             overflow: hidden;
+            background-color: var(--white);
             border-bottom: 1px solid var(--card-gray);
         }
 
@@ -143,97 +140,107 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            object-position: center;
         }
 
+        /* Conteúdo ocupando o restante */
         .news-content {
-            padding: 30px;
-            flex-grow: 1;
+            flex: 1 1 40%;
+            padding: 2.5rem 4rem;
             display: flex;
             flex-direction: column;
+            justify-content: space-between;
         }
 
         .news-source {
-            font-size: 1.1rem;
-            font-weight: bold;
+            font-size: 1.5rem;
+            font-weight: 700;
             color: var(--brand-light-blue); 
             text-transform: uppercase;
-            margin-bottom: 15px;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
         }
 
         .news-title {
-            font-size: 2.2rem; 
-            margin: 0 0 15px 0;
+            font-size: 3.2rem; /* Título bem grande */
+            margin: 0;
             color: var(--dark-text);
-            line-height: 1.3;
+            line-height: 1.15;
+            font-weight: 700;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
-        /* ÁREA INFERIOR DO CARD: DATA + QR CODE */
         .card-footer {
             display: flex;
             justify-content: space-between;
-            align-items: flex-end;
-            margin-top: auto;
+            align-items: center;
+            border-top: 2px solid var(--light-gray);
+            padding-top: 1.5rem;
         }
 
         .news-date {
-            font-size: 1.3rem;
-            color: #6c757d;
-            margin-bottom: 10px;
+            font-size: 1.6rem;
+            color: #64748b;
         }
 
-        /* ESTILOS DO QR CODE */
+        /* QR CODE */
         .qr-container {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 20px;
             background: var(--light-gray);
-            padding: 10px 15px;
-            border-radius: 8px;
-            border: 1px solid var(--card-gray);
+            padding: 15px 25px;
+            border-radius: 15px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
         }
 
         .qr-text {
-            font-size: 1.1rem;
+            font-size: 1.4rem;
             font-weight: bold;
             color: var(--brand-dark-blue);
-            max-width: 140px;
+            max-width: 220px;
             text-align: right;
             line-height: 1.2;
         }
 
         .qr-code-canvas {
-            width: 90px;
-            height: 90px;
+            width: 120px;
+            height: 120px;
             background: var(--white);
-            padding: 5px;
-            border-radius: 4px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 8px;
+            border-radius: 8px;
         }
 
         /* RODAPÉ */
         footer {
-            margin-top: auto;
-            padding: 15px;
+            flex: 0 0 auto;
+            padding: 0.8rem 3rem;
             background-color: #f1f3f5; 
             border-top: 1px solid #ddd;
-            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            font-size: 1.1rem;
         }
 
         .version-tag {
             background: var(--primary-gold); 
             color: var(--brand-dark-blue);
-            padding: 2px 8px;
-            border-radius: 10px;
+            padding: 3px 12px;
+            border-radius: 20px;
             font-weight: bold;
         }
 
         .loader {
-            text-align: center;
-            font-size: 1.5rem;
-            padding: 50px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2rem;
             color: var(--brand-dark-blue);
-            width: 100%;
         }
     </style>
 </head>
@@ -243,30 +250,27 @@
     <div class="header-left-container">
         <span class="brand-p-de-ondina">PARÓQUIA DE ONDINA</span>
         <span class="brand-r-do-senhor">RESSURREIÇÃO DO SENHOR</span>
-        <p class="subtitle">Radar de Notícias Católicas</p>
     </div>
     <div class="header-clock-container">
         <div id="clock-time" class="clock-time">00:00:00</div>
-        <div id="clock-date" class="clock-date">Carregando data...</div>
+        <div id="clock-date" class="clock-date">...</div>
     </div>
 </header>
 
-<div class="container">
-    <div id="loader" class="loader">Carregando o painel de notícias...</div>
+<main>
+    <div id="loader" class="loader">Sincronizando Radar...</div>
     <div id="news-container"></div>
-</div>
+</main>
 
 <footer>
-    <p>
-        © 2026 Paróquia de Ondina - Ressurreição do Senhor | Cristã Católica Apostólica Romana |
-        Versão: <span class="version-tag">3.1.0</span>
-    </p>
+    <span>© 2026 Paróquia de Ondina - Ressurreição do Senhor</span>
+    <span class="version-tag">v3.2.0</span>
 </footer>
 
 <script>
     const sites = [
         {
-            name: "O Ressuscitado (Paróquia)",
+            name: "O Ressuscitado",
             url: "https://api.rss2json.com/v1/api.json?rss_url=https://www.paroquiadeondina.com.br/blog-feed.xml",
             type: "rss"
         },
@@ -293,19 +297,13 @@
     // RELÓGIO
     function updateClock() {
         const now = new Date();
-        const timeElement = document.getElementById('clock-time');
-        const dateElement = document.getElementById('clock-date');
-        
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        const seconds = String(now.getSeconds()).padStart(2, '0');
-        timeElement.textContent = `${hours}:${minutes}:${seconds}`;
+        document.getElementById('clock-time').textContent = now.toLocaleTimeString('pt-BR');
         
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        dateElement.textContent = now.toLocaleDateString('pt-BR', options);
+        document.getElementById('clock-date').textContent = now.toLocaleDateString('pt-BR', options);
     }
-    updateClock();
     setInterval(updateClock, 1000);
+    updateClock();
 
     async function fetchNews() {
         const container = document.getElementById('news-container');
@@ -315,41 +313,21 @@
         try {
             const requests = sites.map(site => {
                 if (site.type === 'rss') {
-                    return fetch(site.url)
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.status !== 'ok' || !data.items) return [];
-                            return data.items.map(item => ({
-                                title: { rendered: item.title },
-                                date: item.pubDate,
-                                link: item.link,
-                                sourceName: site.name,
-                                isRss: true, 
-                                _embedded: {
-                                    'wp:featuredmedia': [
-                                        { source_url: item.thumbnail || (item.enclosure ? item.enclosure.link : null) }
-                                    ]
-                                }
-                            }));
-                        })
-                        .catch(err => {
-                            console.error(`Erro ao carregar RSS de ${site.name}:`, err);
-                            return []; 
-                        });
+                    return fetch(site.url).then(res => res.json()).then(data => {
+                        if (data.status !== 'ok') return [];
+                        return data.items.map(item => ({
+                            title: { rendered: item.title },
+                            date: item.pubDate,
+                            link: item.link,
+                            sourceName: site.name,
+                            isRss: true, 
+                            _embedded: { 'wp:featuredmedia': [{ source_url: item.thumbnail || item.enclosure.link || null }] }
+                        }));
+                    }).catch(() => []);
                 } else {
-                    const proxyUrl = proxyPrefix + encodeURIComponent(site.url);
-                    return fetch(proxyUrl)
-                        .then(res => {
-                            if (!res.ok) throw new Error("Falha de rede no Proxy");
-                            return res.json();
-                        })
-                        .then(posts => {
-                            return posts.map(post => ({ ...post, sourceName: site.name }));
-                        })
-                        .catch(err => {
-                            console.error(`Erro ao carregar WP ${site.name}:`, err);
-                            return []; 
-                        });
+                    return fetch(proxyPrefix + encodeURIComponent(site.url)).then(res => res.json()).then(posts => {
+                        return posts.map(post => ({ ...post, sourceName: site.name }));
+                    }).catch(() => []);
                 }
             });
 
@@ -357,16 +335,9 @@
             allPosts = results.flat().sort((a, b) => new Date(b.date) - new Date(a.date));
 
             loader.style.display = 'none';
-
-            if(allPosts.length === 0) {
-                container.innerHTML = "<h3 style='text-align:center; width:100%; color:var(--brand-dark-blue);'>Não foi possível carregar as notícias.</h3>";
-            } else {
-                renderPosts(allPosts);
-            }
-
+            renderPosts(allPosts);
         } catch (error) {
-            loader.innerHTML = "Ocorreu um erro grave ao carregar o radar.";
-            console.error(error);
+            loader.textContent = "Erro de Conexão";
         }
     }
 
@@ -377,41 +348,27 @@
             const card = document.createElement('div');
             card.className = 'news-card';
 
-            let rawFeaturedImage = null;
-            if (post._embedded && post._embedded['wp:featuredmedia'] && post._embedded['wp:featuredmedia'][0]) {
-                rawFeaturedImage = post._embedded['wp:featuredmedia'][0].source_url;
-            }
+            let rawImg = post._embedded?.['wp:featuredmedia']?.[0]?.source_url;
+            let finalImg = rawImg ? (post.isRss ? rawImg : proxyPrefix + encodeURIComponent(rawImg)) : jokerImagePath;
+            let imgStyle = !rawImg ? "object-fit: contain; padding: 60px;" : "";
 
-            let finalImageSrc = jokerImagePath;
-            let isJoker = true;
+            const dateStr = new Date(post.date).toLocaleDateString('pt-BR');
 
-            if (rawFeaturedImage) {
-                isJoker = false;
-                if (post.isRss) {
-                    finalImageSrc = rawFeaturedImage;
-                } else {
-                    finalImageSrc = proxyPrefix + encodeURIComponent(rawFeaturedImage);
-                }
-            }
-
-            const dateFormatted = new Date(post.date).toLocaleDateString('pt-BR');
-            const title = post.title && post.title.rendered ? post.title.rendered : 'Título indisponível';
-            const imgStyle = isJoker ? "object-fit: contain; padding: 40px;" : "";
-
-            // Novo layout integrando o contêiner do QR Code
             card.innerHTML = `
                 <div class="img-wrapper">
-                    <img src="${finalImageSrc}" class="news-image" alt="Imagem da notícia" style="${imgStyle}" 
-                         onerror="this.onerror=null; this.src='${jokerImagePath}'; this.style.objectFit='contain'; this.style.padding='40px';">
+                    <img src="${finalImg}" class="news-image" style="${imgStyle}" 
+                         onerror="this.src='${jokerImagePath}'; this.style.objectFit='contain'; this.style.padding='60px';">
                 </div>
                 <div class="news-content">
-                    <span class="news-source">${post.sourceName}</span>
-                    <h2 class="news-title">${title}</h2>
+                    <div>
+                        <span class="news-source">${post.sourceName}</span>
+                        <h2 class="news-title">${post.title.rendered}</h2>
+                    </div>
                     
                     <div class="card-footer">
-                        <span class="news-date">📅 ${dateFormatted}</span>
+                        <span class="news-date">📅 ${dateStr}</span>
                         <div class="qr-container">
-                            <span class="qr-text">Escaneie para ler no celular:</span>
+                            <span class="qr-text">Leia a notícia completa:</span>
                             <div class="qr-code-canvas" id="qrcode-${index}"></div>
                         </div>
                     </div>
@@ -419,17 +376,13 @@
             `;
             container.appendChild(card);
 
-            // Gera o QR Code dinamicamente usando a cor da marca
-            if(post.link) {
-                new QRCode(document.getElementById(`qrcode-${index}`), {
-                    text: post.link,
-                    width: 90,
-                    height: 90,
-                    colorDark : "#295F8E", // Azul da marca
-                    colorLight : "#ffffff",
-                    correctLevel : QRCode.CorrectLevel.L
-                });
-            }
+            new QRCode(document.getElementById(`qrcode-${index}`), {
+                text: post.link,
+                width: 120,
+                height: 120,
+                colorDark : "#295F8E",
+                correctLevel : QRCode.CorrectLevel.L
+            });
         });
 
         startCarousel();
@@ -437,17 +390,13 @@
 
     function startCarousel() {
         const cards = document.querySelectorAll('.news-card');
-        let currentIndex = 0;
-        
-        if (cards.length === 0) return;
-
-        cards[currentIndex].classList.add('active');
-
-        // Alterna os cards a cada 15 segundos
+        let idx = 0;
+        if (!cards.length) return;
+        cards[idx].classList.add('active');
         setInterval(() => {
-            cards[currentIndex].classList.remove('active');
-            currentIndex = (currentIndex + 1) % cards.length;
-            cards[currentIndex].classList.add('active');
+            cards[idx].classList.remove('active');
+            idx = (idx + 1) % cards.length;
+            cards[idx].classList.add('active');
         }, 15000); 
     }
 
