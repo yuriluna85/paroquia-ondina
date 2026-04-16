@@ -109,7 +109,7 @@
             border-bottom: 1px solid var(--card-gray);
             opacity: 0;
             transition: opacity 0.5s ease-out;
-            box-sizing: border-box; /* Garante que o padding não quebre o tamanho */
+            box-sizing: border-box; 
         }
 
         .news-image.loaded {
@@ -209,7 +209,7 @@
 <footer>
     <p>
         © 2026 Paróquia de Ondina - Ressurreição do Senhor | 
-        Versão: <span class="version-tag">2.1.6</span>
+        Versão: <span class="version-tag">2.1.7</span>
     </p>
 </footer>
 
@@ -238,8 +238,8 @@
         }
     ];
 
-    // NOME DA SUA IMAGEM LOCAL (Certifique-se de que o arquivo no seu repositório se chame logo-paroquia.png)
-    const jokerImagePath = "./logo-paroquia.png";
+    // LINK DIRETO (RAW) DA IMAGEM NO GITHUB
+    const jokerImagePath = "https://github.com/yuriluna85/paroquia-ondina/blob/main/Paroquia_Ondina.png?raw=true";
     const proxyPrefix = "https://corsproxy.io/?";
 
     async function fetchNews() {
@@ -333,10 +333,9 @@
             const dateFormatted = new Date(post.date).toLocaleDateString('pt-BR');
             const title = post.title && post.title.rendered ? post.title.rendered : 'Título indisponível';
             
-            // Se a imagem for a coringa desde o início, aplica estilos para não cortar a logo
+            // Aplica os estilos para não cortar a logo, caso seja a imagem coringa
             const imgStyle = isJoker ? "object-fit: contain; padding: 20px; background-color: var(--white);" : "";
 
-            // O atributo onerror garante que se a imagem original falhar, a logo coringa assume com os ajustes de CSS adequados
             card.innerHTML = `
                 <img src="${finalImageSrc}" class="news-image" alt="Imagem da notícia" style="${imgStyle}" 
                      onerror="this.onerror=null; this.src='${jokerImagePath}'; this.style.objectFit='contain'; this.style.padding='20px'; this.style.backgroundColor='var(--white)';">
