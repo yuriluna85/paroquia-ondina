@@ -109,6 +109,7 @@
             border-bottom: 1px solid var(--card-gray);
             opacity: 0;
             transition: opacity 0.5s ease-out;
+            box-sizing: border-box; /* Garante que o padding não quebre o tamanho */
         }
 
         .news-image.loaded {
@@ -208,16 +209,15 @@
 <footer>
     <p>
         © 2026 Paróquia de Ondina - Ressurreição do Senhor | 
-        Versão: <span class="version-tag">2.1.5</span>
+        Versão: <span class="version-tag">2.1.6</span>
     </p>
 </footer>
 
 <script>
-    // FONTES DE NOTÍCIAS (Agora com suporte a RSS)
+    // FONTES DE NOTÍCIAS
     const sites = [
         {
             name: "O Ressuscitado (Paróquia)",
-            // Usa a API rss2json para converter o feed de postagens do site da paróquia
             url: "https://api.rss2json.com/v1/api.json?rss_url=https://www.paroquiadeondina.com.br/blog-feed.xml",
             type: "rss"
         },
@@ -238,6 +238,7 @@
         }
     ];
 
+    // NOME DA SUA IMAGEM LOCAL (Certifique-se de que o arquivo no seu repositório se chame logo-paroquia.png)
     const jokerImagePath = "./logo-paroquia.png";
     const proxyPrefix = "https://corsproxy.io/?";
 
@@ -248,15 +249,11 @@
 
         try {
             const requests = sites.map(site => {
-                // LÓGICA PARA SITES RSS (Como o site da Paróquia)
                 if (site.type === 'rss') {
                     return fetch(site.url)
                         .then(res => res.json())
                         .then(data => {
                             if (data.status !== 'ok' || !data.items) return [];
-                            
-                            // Mapeia os dados do RSS para "fingir" que é um post do WordPress
-                            // Isso impede que precisemos refazer a função de layout dos cards
                             return data.items.map(item => ({
                                 title: { rendered: item.title },
                                 date: item.pubDate,
@@ -274,9 +271,7 @@
                             console.error(`Erro ao carregar RSS de ${site.name}:`, err);
                             return []; 
                         });
-                } 
-                // LÓGICA PARA SITES WORDPRESS (CNBB, Arquidiocese, etc)
-                else {
+                } else {
                     const proxyUrl = proxyPrefix + encodeURIComponent(site.url);
                     return fetch(proxyUrl)
                         .then(res => {
@@ -294,8 +289,6 @@
             });
 
             const results = await Promise.all(requests);
-            
-            // Junta as notícias de todos os sites e ordena cronologicamente
             allPosts = results.flat().sort((a, b) => new Date(b.date) - new Date(a.date));
 
             loader.style.display = 'none';
@@ -325,24 +318,28 @@
                 rawFeaturedImage = post._embedded['wp:featuredmedia'][0].source_url;
             }
 
-            let finalImageSrc;
+            let finalImageSrc = jokerImagePath;
+            let isJoker = true;
+
             if (rawFeaturedImage) {
-                // Se a notícia for RSS, a imagem não passa pelo proxy CORS para não quebrar
+                isJoker = false;
                 if (post.isRss) {
                     finalImageSrc = rawFeaturedImage;
                 } else {
                     finalImageSrc = proxyPrefix + encodeURIComponent(rawFeaturedImage);
                 }
-            } else {
-                finalImageSrc = jokerImagePath;
             }
 
             const dateFormatted = new Date(post.date).toLocaleDateString('pt-BR');
             const title = post.title && post.title.rendered ? post.title.rendered : 'Título indisponível';
-            const errorImageFallback = "https://placehold.co/400x250/295F8E/FFFFFF?text=Imagem+Indisponivel";
+            
+            // Se a imagem for a coringa desde o início, aplica estilos para não cortar a logo
+            const imgStyle = isJoker ? "object-fit: contain; padding: 20px; background-color: var(--white);" : "";
 
+            // O atributo onerror garante que se a imagem original falhar, a logo coringa assume com os ajustes de CSS adequados
             card.innerHTML = `
-                <img src="${finalImageSrc}" class="news-image" alt="Imagem da notícia" onerror="this.src='${errorImageFallback}'">
+                <img src="${finalImageSrc}" class="news-image" alt="Imagem da notícia" style="${imgStyle}" 
+                     onerror="this.onerror=null; this.src='${jokerImagePath}'; this.style.objectFit='contain'; this.style.padding='20px'; this.style.backgroundColor='var(--white)';">
                 <div class="news-content">
                     <span class="news-source">${post.sourceName}</span>
                     <h2 class="news-title">${title}</h2>
