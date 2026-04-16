@@ -52,19 +52,33 @@
             gap: 20px;
         }
 
+        /* Animação de Entrada para os Cards */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         /* Card de Notícia */
         .news-card {
             background: var(--white);
             border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 2px 15px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
             display: flex;
             flex-direction: column;
+            animation: fadeIn 0.6s ease-out forwards; /* Animação aplicada aqui */
         }
 
         .news-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
         }
 
         .news-image {
@@ -155,11 +169,10 @@
 </div>
 
 <footer>
-    <p>© 2026 Paróquia de Ondina - Radar Religioso | Versão: <span class="version-tag">2.1.1</span></p>
+    <p>© 2026 Paróquia de Ondina - Radar Religioso | Versão: <span class="version-tag">2.1.2</span></p>
 </footer>
 
 <script>
-    // Atualizamos as fontes: Sai ACI Digital (bloqueada), entra Canção Nova
     const sites = [
         {
             name: "CNBB",
@@ -171,7 +184,7 @@
         },
         {
             name: "Arquidiocese de Salvador",
-            url: "https://arquidiocesesalvador.org.br/wp-json/wp/v2/posts?_embed&per_page=4" // HTTPS forçado aqui
+            url: "https://arquidiocesesalvador.org.br/wp-json/wp/v2/posts?_embed&per_page=4" 
         }
     ];
 
@@ -182,7 +195,6 @@
 
         try {
             const requests = sites.map(site => {
-                // Criamos a URL do proxy que vai "buscar" a notícia para você
                 const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(site.url)}`;
                 
                 return fetch(proxyUrl)
@@ -191,20 +203,18 @@
                         return res.json();
                     })
                     .then(data => {
-                        // O Proxy devolve os dados dentro de 'contents' como texto, precisamos converter de volta para JSON
                         if (!data.contents) return [];
                         const posts = JSON.parse(data.contents);
                         return posts.map(post => ({ ...post, sourceName: site.name }));
                     })
                     .catch(err => {
                         console.error(`Erro ao carregar ${site.name}:`, err);
-                        return []; // Se um falhar, retorna vazio e não quebra os outros
+                        return []; 
                     });
             });
 
             const results = await Promise.all(requests);
             
-            // Achata o array e ordena da notícia mais recente para a mais antiga
             allPosts = results.flat().sort((a, b) => new Date(b.date) - new Date(a.date));
 
             loader.style.display = 'none';
@@ -224,11 +234,13 @@
     function renderPosts(posts) {
         const container = document.getElementById('news-container');
         
-        posts.forEach(post => {
+        posts.forEach((post, index) => {
             const card = document.createElement('div');
             card.className = 'news-card';
+            
+            // Adiciona um pequeno delay na animação de cada card para um efeito cascata visual
+            card.style.animationDelay = `${index * 0.05}s`;
 
-            // Busca a imagem de destaque ou coloca um placeholder se não existir
             let featuredImage = 'https://via.placeholder.com/400x250?text=Sem+Imagem';
             if (post._embedded && post._embedded['wp:featuredmedia'] && post._embedded['wp:featuredmedia'][0]) {
                 featuredImage = post._embedded['wp:featuredmedia'][0].source_url;
@@ -250,7 +262,6 @@
         });
     }
 
-    // Dá a partida na busca
     fetchNews();
 </script>
 
