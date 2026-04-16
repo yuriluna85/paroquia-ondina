@@ -6,7 +6,7 @@
     <title>Radar de Notícias - Paróquia de Ondina</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        /* DEFINIÇÃO DAS CORES DA MARCA PARÓQUIA DE ONDINA - RESSURREIÇÃO DO SENHOR */
+        /* DEFINIÇÃO DAS CORES DA MARCA PARÓQUIA DE ONDINA */
         :root {
             --brand-dark-blue: #295F8E; 
             --brand-light-blue: #4F93D0; 
@@ -23,6 +23,9 @@
             color: var(--dark-text);
             margin: 0;
             padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
         header {
@@ -64,115 +67,147 @@
         }
 
         .container {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
             max-width: 1200px;
-            margin: 20px auto;
-            padding: 0 15px;
+            margin: 0 auto;
+            padding: 40px 15px;
         }
 
+        /* CONTAINER DO CARROSSEL */
         #news-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
-            gap: 20px;
+            position: relative;
+            width: 100%;
+            max-width: 900px; /* Card bem largo para painéis/telas */
+            height: 650px; /* Altura fixa para evitar pulos de layout */
+            background-color: transparent;
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(15px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
+        /* LÓGICA DE TRANSIÇÃO SUAVE DOS CARDS */
         .news-card {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: var(--white);
             border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            transition: all 0.3s ease;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
             display: flex;
             flex-direction: column;
-            animation: fadeIn 0.6s ease-out forwards;
+            
+            /* Estado invisível padrão */
+            opacity: 0;
+            visibility: hidden;
+            z-index: 0;
+            transition: opacity 1.5s ease-in-out, visibility 1.5s ease-in-out;
         }
 
-        .news-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        /* Card Atualmente na Tela */
+        .news-card.active {
+            opacity: 1;
+            visibility: visible;
+            z-index: 2;
+        }
+
+        /* Card que está saindo (Mantém ele atrás do novo enquanto desaparece) */
+        .news-card.last-active {
+            opacity: 0;
+            visibility: hidden;
+            z-index: 1; 
+        }
+
+        /* WRAPPER E ANIMAÇÃO DA IMAGEM */
+        .img-wrapper {
+            width: 100%;
+            height: 380px; /* Imagem mais alta para o carrossel */
+            overflow: hidden;
+            border-bottom: 1px solid var(--card-gray);
+            background-color: var(--white); /* Fundo branco para a coringa */
         }
 
         .news-image {
             width: 100%;
-            height: 220px;
+            height: 100%;
             object-fit: cover;
-            border-bottom: 1px solid var(--card-gray);
-            opacity: 0;
-            transition: opacity 0.5s ease-out;
-            box-sizing: border-box; 
+            transform: scale(1);
         }
 
-        .news-image.loaded {
-            opacity: 1;
+        /* O segredo para não "quebrar": a animação roda no active e no last-active */
+        .news-card.active .news-image,
+        .news-card.last-active .news-image {
+            animation: smoothZoom 14s linear forwards; 
+        }
+
+        @keyframes smoothZoom {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.15); } /* Zoom suave de 15% */
         }
 
         .news-content {
-            padding: 20px;
+            padding: 25px;
             flex-grow: 1;
+            display: flex;
+            flex-direction: column;
         }
 
         .news-source {
-            font-size: 0.85rem;
+            font-size: 0.95rem;
             font-weight: bold;
             color: var(--brand-light-blue); 
             text-transform: uppercase;
             margin-bottom: 10px;
-            display: block;
         }
 
         .news-title {
-            font-size: 1.3rem;
-            margin: 0 0 12px 0;
+            font-size: 1.8rem; /* Título maior para leitura à distância */
+            margin: 0 0 15px 0;
             color: var(--dark-text);
-            line-height: 1.4;
+            line-height: 1.3;
         }
 
         .news-date {
-            font-size: 0.9rem;
+            font-size: 1rem;
             color: #6c757d;
-        }
-
-        .btn-link {
-            display: inline-block;
             margin-top: auto;
-            padding: 12px;
-            background-color: var(--brand-dark-blue); 
-            color: var(--white);
-            text-decoration: none;
-            border-radius: 0 0 12px 12px; 
-            font-weight: bold;
-            text-align: center;
-            width: 100%;
-            box-sizing: border-box; 
-            border: none;
-            transition: background-color 0.2s ease;
         }
 
-        .btn-link:hover {
-            background-color: #1e537e; 
+        /* BARRA DE PROGRESSO DO TEMPO */
+        .progress-bar-container {
+            width: 100%;
+            height: 6px;
+            background-color: var(--card-gray);
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--brand-light-blue);
+            width: 0%;
+        }
+
+        /* A barra enche em exatos 12 segundos */
+        .news-card.active .progress-bar {
+            animation: progressTime 12s linear forwards;
+        }
+
+        @keyframes progressTime {
+            0% { width: 0%; }
+            100% { width: 100%; }
         }
 
         footer {
-            margin-top: 50px;
+            margin-top: auto;
             padding: 30px;
             background-color: #f1f3f5; 
             border-top: 1px solid #ddd;
             text-align: center;
-        }
-
-        .paroquia-de-ondina-footer {
-            font-weight: bold;
-            color: var(--brand-dark-blue);
         }
 
         .version-tag {
@@ -188,6 +223,7 @@
             font-size: 1.5rem;
             padding: 50px;
             color: var(--brand-dark-blue);
+            width: 100%;
         }
     </style>
 </head>
@@ -202,19 +238,18 @@
 </header>
 
 <div class="container">
-    <div id="loader" class="loader">Buscando as últimas notícias...</div>
+    <div id="loader" class="loader">Carregando o painel de notícias...</div>
     <div id="news-container"></div>
 </div>
 
 <footer>
     <p>
         © 2026 Paróquia de Ondina - Ressurreição do Senhor | 
-        Versão: <span class="version-tag">2.1.7</span>
+        Versão: <span class="version-tag">2.1.8</span>
     </p>
 </footer>
 
 <script>
-    // FONTES DE NOTÍCIAS
     const sites = [
         {
             name: "O Ressuscitado (Paróquia)",
@@ -238,7 +273,6 @@
         }
     ];
 
-    // LINK DIRETO (RAW) DA IMAGEM NO GITHUB
     const jokerImagePath = "https://github.com/yuriluna85/paroquia-ondina/blob/main/Paroquia_Ondina.png?raw=true";
     const proxyPrefix = "https://corsproxy.io/?";
 
@@ -275,7 +309,7 @@
                     const proxyUrl = proxyPrefix + encodeURIComponent(site.url);
                     return fetch(proxyUrl)
                         .then(res => {
-                            if (!res.ok) throw new Error("Falha de rede no Proxy/Servidor");
+                            if (!res.ok) throw new Error("Falha de rede no Proxy");
                             return res.json();
                         })
                         .then(posts => {
@@ -294,7 +328,7 @@
             loader.style.display = 'none';
 
             if(allPosts.length === 0) {
-                container.innerHTML = "<h3 style='text-align:center; width:100%; color:var(--brand-dark-blue);'>Não foi possível carregar as notícias no momento. Tente recarregar a página.</h3>";
+                container.innerHTML = "<h3 style='text-align:center; width:100%; color:var(--brand-dark-blue);'>Não foi possível carregar as notícias.</h3>";
             } else {
                 renderPosts(allPosts);
             }
@@ -311,7 +345,6 @@
         posts.forEach((post, index) => {
             const card = document.createElement('div');
             card.className = 'news-card';
-            card.style.animationDelay = `${index * 0.05}s`;
 
             let rawFeaturedImage = null;
             if (post._embedded && post._embedded['wp:featuredmedia'] && post._embedded['wp:featuredmedia'][0]) {
@@ -333,24 +366,52 @@
             const dateFormatted = new Date(post.date).toLocaleDateString('pt-BR');
             const title = post.title && post.title.rendered ? post.title.rendered : 'Título indisponível';
             
-            // Aplica os estilos para não cortar a logo, caso seja a imagem coringa
-            const imgStyle = isJoker ? "object-fit: contain; padding: 20px; background-color: var(--white);" : "";
+            const imgStyle = isJoker ? "object-fit: contain; padding: 30px;" : "";
 
             card.innerHTML = `
-                <img src="${finalImageSrc}" class="news-image" alt="Imagem da notícia" style="${imgStyle}" 
-                     onerror="this.onerror=null; this.src='${jokerImagePath}'; this.style.objectFit='contain'; this.style.padding='20px'; this.style.backgroundColor='var(--white)';">
+                <div class="img-wrapper">
+                    <img src="${finalImageSrc}" class="news-image" alt="Imagem da notícia" style="${imgStyle}" 
+                         onerror="this.onerror=null; this.src='${jokerImagePath}'; this.style.objectFit='contain'; this.style.padding='30px';">
+                </div>
                 <div class="news-content">
                     <span class="news-source">${post.sourceName}</span>
                     <h2 class="news-title">${title}</h2>
                     <span class="news-date">📅 ${dateFormatted}</span>
                 </div>
-                <a href="${post.link}" target="_blank" class="btn-link">Leia mais</a>
+                <div class="progress-bar-container">
+                    <div class="progress-bar"></div>
+                </div>
             `;
             container.appendChild(card);
-            
-            const img = card.querySelector('.news-image');
-            img.addEventListener('load', () => img.classList.add('loaded'));
         });
+
+        startCarousel();
+    }
+
+    // LÓGICA DO CARROSSEL
+    function startCarousel() {
+        const cards = document.querySelectorAll('.news-card');
+        if (cards.length === 0) return;
+
+        let currentIndex = 0;
+        
+        // Ativa o primeiro card
+        cards[currentIndex].classList.add('active');
+
+        // Configura o intervalo de 12 segundos
+        setInterval(() => {
+            // Remove o estado de "saindo" de todos os cards para limpar a fila
+            cards.forEach(c => c.classList.remove('last-active'));
+            
+            // O card atual começa a sair (crossfade)
+            cards[currentIndex].classList.remove('active');
+            cards[currentIndex].classList.add('last-active');
+            
+            // Calcula o próximo card e o ativa
+            currentIndex = (currentIndex + 1) % cards.length;
+            cards[currentIndex].classList.add('active');
+            
+        }, 12000); // 12000 ms = 12 segundos
     }
 
     fetchNews();
