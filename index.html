@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Radar Religioso - Paróquia de Ondina (Mural Digital v3.0)</title>
+    <title>Radar Religioso - Paróquia de Ondina (Mural v3.1)</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         /* DEFINIÇÃO DAS CORES DA MARCA PARÓQUIA DE ONDINA */
         :root {
@@ -79,7 +80,7 @@
         .clock-time {
             font-size: 2.8rem;
             font-weight: bold;
-            font-variant-numeric: tabular-nums; /* Mantém largura fixa dos números */
+            font-variant-numeric: tabular-nums; 
         }
 
         .clock-date {
@@ -102,7 +103,7 @@
         #news-container {
             position: relative;
             width: 100%;
-            height: 700px; /* Altura fixa para estabilidade do painel */
+            height: 700px; 
             display: flex;
             justify-content: center;
             align-items: center;
@@ -113,13 +114,13 @@
             100% { opacity: 1; }
         }
 
-        /* DESIGN DO CARD EM FORMATO DE SLIDE (ÚNICO E CENTRALIZADO) */
+        /* DESIGN DO CARD */
         .news-card {
             background: var(--white);
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 8px 30px rgba(0,0,0,0.15);
-            display: none; /* Escondido por padrão, JavaScript ativa um por um */
+            display: none; 
             flex-direction: column;
             width: 100%;
             max-width: 1200px;
@@ -127,14 +128,13 @@
             animation: crossFade 1s ease-in-out;
         }
 
-        /* Classe para exibir o card ativo */
         .news-card.active {
             display: flex;
         }
 
         .img-wrapper {
             width: 100%;
-            height: 450px; /* Imagem maior para o carrossel */
+            height: 400px; 
             overflow: hidden;
             border-bottom: 1px solid var(--card-gray);
         }
@@ -162,19 +162,56 @@
         }
 
         .news-title {
-            font-size: 2.2rem; /* FONTE MASSIVA PARA LEITURA AO LONGE */
+            font-size: 2.2rem; 
             margin: 0 0 15px 0;
             color: var(--dark-text);
             line-height: 1.3;
         }
 
-        .news-date {
-            font-size: 1.1rem;
-            color: #6c757d;
+        /* ÁREA INFERIOR DO CARD: DATA + QR CODE */
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
             margin-top: auto;
         }
 
-        /* RODAPÉ MÍNIMO */
+        .news-date {
+            font-size: 1.3rem;
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+
+        /* ESTILOS DO QR CODE */
+        .qr-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: var(--light-gray);
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid var(--card-gray);
+        }
+
+        .qr-text {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--brand-dark-blue);
+            max-width: 140px;
+            text-align: right;
+            line-height: 1.2;
+        }
+
+        .qr-code-canvas {
+            width: 90px;
+            height: 90px;
+            background: var(--white);
+            padding: 5px;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* RODAPÉ */
         footer {
             margin-top: auto;
             padding: 15px;
@@ -191,7 +228,6 @@
             font-weight: bold;
         }
 
-        /* Loading Spinner */
         .loader {
             text-align: center;
             font-size: 1.5rem;
@@ -223,7 +259,7 @@
 <footer>
     <p>
         © 2026 Paróquia de Ondina - Ressurreição do Senhor | Cristã Católica Apostólica Romana |
-        Versão: <span class="version-tag">3.0.0</span>
+        Versão: <span class="version-tag">3.1.0</span>
     </p>
 </footer>
 
@@ -254,24 +290,20 @@
     const jokerImagePath = "https://github.com/yuriluna85/paroquia-ondina/blob/main/Paroquia_Ondina.png?raw=true";
     const proxyPrefix = "https://corsproxy.io/?";
 
-    // LÓGICA DO RELÓGIO DIGITAL
+    // RELÓGIO
     function updateClock() {
         const now = new Date();
         const timeElement = document.getElementById('clock-time');
         const dateElement = document.getElementById('clock-date');
         
-        // Formata Hora (HH:MM:SS)
         const hours = String(now.getHours()).padStart(2, '0');
         const minutes = String(now.getMinutes()).padStart(2, '0');
         const seconds = String(now.getSeconds()).padStart(2, '0');
         timeElement.textContent = `${hours}:${minutes}:${seconds}`;
         
-        // Formata Data (Dia da semana, DD de Mês de AAAA)
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         dateElement.textContent = now.toLocaleDateString('pt-BR', options);
     }
-
-    // Inicia o relógio e define atualização a cada segundo
     updateClock();
     setInterval(updateClock, 1000);
 
@@ -308,7 +340,7 @@
                     const proxyUrl = proxyPrefix + encodeURIComponent(site.url);
                     return fetch(proxyUrl)
                         .then(res => {
-                            if (!res.ok) throw new Error("Falha de rede no Proxy/Servidor");
+                            if (!res.ok) throw new Error("Falha de rede no Proxy");
                             return res.json();
                         })
                         .then(posts => {
@@ -327,7 +359,7 @@
             loader.style.display = 'none';
 
             if(allPosts.length === 0) {
-                container.innerHTML = "<h3 style='text-align:center; width:100%; color:var(--brand-dark-blue);'>Não foi possível carregar as notícias. Tente recarregar a página.</h3>";
+                container.innerHTML = "<h3 style='text-align:center; width:100%; color:var(--brand-dark-blue);'>Não foi possível carregar as notícias.</h3>";
             } else {
                 renderPosts(allPosts);
             }
@@ -343,7 +375,6 @@
         
         posts.forEach((post, index) => {
             const card = document.createElement('div');
-            // Removemos a animação individual, agora a animação é controlada pelo carrossel
             card.className = 'news-card';
 
             let rawFeaturedImage = null;
@@ -367,7 +398,7 @@
             const title = post.title && post.title.rendered ? post.title.rendered : 'Título indisponível';
             const imgStyle = isJoker ? "object-fit: contain; padding: 40px;" : "";
 
-            // Removemos o botão 'Leia mais', pois é para visualização em mídia indoor
+            // Novo layout integrando o contêiner do QR Code
             card.innerHTML = `
                 <div class="img-wrapper">
                     <img src="${finalImageSrc}" class="news-image" alt="Imagem da notícia" style="${imgStyle}" 
@@ -376,35 +407,50 @@
                 <div class="news-content">
                     <span class="news-source">${post.sourceName}</span>
                     <h2 class="news-title">${title}</h2>
-                    <span class="news-date">📅 ${dateFormatted}</span>
+                    
+                    <div class="card-footer">
+                        <span class="news-date">📅 ${dateFormatted}</span>
+                        <div class="qr-container">
+                            <span class="qr-text">Escaneie para ler no celular:</span>
+                            <div class="qr-code-canvas" id="qrcode-${index}"></div>
+                        </div>
+                    </div>
                 </div>
             `;
             container.appendChild(card);
+
+            // Gera o QR Code dinamicamente usando a cor da marca
+            if(post.link) {
+                new QRCode(document.getElementById(`qrcode-${index}`), {
+                    text: post.link,
+                    width: 90,
+                    height: 90,
+                    colorDark : "#295F8E", // Azul da marca
+                    colorLight : "#ffffff",
+                    correctLevel : QRCode.CorrectLevel.L
+                });
+            }
         });
 
-        // Dá início à lógica do carrossel/slideshow
         startCarousel();
     }
 
-    // LÓGICA DO CARROSSEL
     function startCarousel() {
         const cards = document.querySelectorAll('.news-card');
         let currentIndex = 0;
         
         if (cards.length === 0) return;
 
-        // Exibe o primeiro card
         cards[currentIndex].classList.add('active');
 
-        // Define a troca a cada 15 segundos
+        // Alterna os cards a cada 15 segundos
         setInterval(() => {
             cards[currentIndex].classList.remove('active');
             currentIndex = (currentIndex + 1) % cards.length;
             cards[currentIndex].classList.add('active');
-        }, 15000); // 15000ms = 15 segundos
+        }, 15000); 
     }
 
-    // Iniciar busca
     fetchNews();
 </script>
 
